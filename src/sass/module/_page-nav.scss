@@ -1,28 +1,35 @@
 @use "global" as *;
 
 .page-nav {
-  position: relative;
-  max-width: rem(444);
   margin-inline: auto;
+	text-align: center;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	gap:rem(40);
 }
 
 .page-nav__pager {
   display: flex;
+	flex-direction: row;
   justify-content: center;
+	align-items: center;
   gap: rem(12);
 }
 
 .page-nav__page {
   width: rem(38);
   height: rem(38);
-  border: 1px solid $greenaccent;
-  color: $greenaccent;
   z-index: 100;
 }
-.page-nav__page.is-active {
-  background-color: $greenaccent;
-  color: $white;
+//プラグイン用にCSS追加
+.wp-pagenavi {
+	display: flex;
+	flex-direction: row;
+	gap:rem(12);
 }
+
 .page-nav__link {
   width: 100%;
   height: inherit;
@@ -30,18 +37,28 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+	border: 1px solid $greenaccent;
+  color: $greenaccent;
+	transition: all 0.3s;
+	width: rem(38);
+  height: rem(38);
+}
+.page-nav__link.is-current {
+  background-color: $greenaccent;
+  color: $white;
+}
+.page-nav__link:hover {
+  background-color: $greenaccent;
+  color: $white;
 }
 
 .page-nav__arrows {
-  display: flex;
-  justify-content: space-between;
-  background-color: transparent;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	gap:rem(82);
 }
-
 .page-nav__arrow {
   width: rem(38);
   height: rem(38);
@@ -54,13 +71,11 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+	color:$greenaccent;
+	transition: all 0.3s;
 }
-.page-nav__arrow img {
-  width: 8px;
-  aspect-ratio: 8 / 16;
-  object-fit: cover;
-}
-.page-nav__arrow:hover {
+
+.page-nav__arrow a:hover {
 	background-color: $greenaccent;
 	color:$white;
 }

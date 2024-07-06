@@ -9,13 +9,7 @@
 
 	<h2 class="mv__title">contact</h2>
 </section>
-<div class="breadcrumb-wrapper">
-	<div class="breadcrumb-wrapper__inner inner">
-		<div class="breadcrumb">
-			<a href="./index.html">TOP</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="#">お問い合わせ</a>&nbsp;&nbsp;>&nbsp;&nbsp;送信完了
-		</div>
-	</div>
-</div>
+<?php get_template_part('common/breadcrumb') ?>
 <div class="page-thanks page-thanks-layout">
 	<div class="page-thanks__inner inner">
 		<p class="page-thanks__title fish">

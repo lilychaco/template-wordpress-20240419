@@ -1,5 +1,5 @@
 <?php get_header(); ?>
-
+<?php get_template_part('common/breadcrumb') ?>
 <div class="breadcrumb-wrapper breadcrumb-wrapper--404">
 	<div class="breadcrumb-wrapper__inner inner">
 		<div class="breadcrumb breadcrumb--404">

@@ -35,8 +35,19 @@ add_action('wp_enqueue_scripts', 'theme_enqueue_styles');
 * WordPress標準機能
 */
 function my_setup() {
-add_theme_support( 'post-thumbnails' ); // サムネイル画像の登録
-add_theme_support( 'title-tag' ); /* タイトルタグ自動生成 */
+	add_theme_support( 'post-thumbnails' ); /* アイキャッチ */
+	add_theme_support( 'automatic-feed-links' ); /* RSSフィード */
+	add_theme_support( 'title-tag' ); /* タイトルタグ自動生成 */
+	add_theme_support(
+		'html5',
+		array( /* HTML5のタグで出力 */
+			'search-form',
+			'comment-form',
+			'comment-list',
+			'gallery',
+			'caption',
+		)
+	);
 }
 add_action( 'after_setup_theme', 'my_setup' );
 
@@ -149,16 +160,31 @@ return '...';
 }
 add_filter( 'excerpt_more', 'my_excerpt_more' );
 
-/**
-* WordPressサイトの画像に自動的に付与されるclass等のタグを削除
-**/
-function image_tag_delete( $html ){
-$html = preg_replace( '/(width|height)="\d*"\s/', '', $html );
-$html = preg_replace( '/class=[\'"]([^\'"]+)[\'"]/i', '', $html );
-$html = preg_replace( '/title=[\'"]([^\'"]+)[\'"]/i', '', $html );
-$html = preg_replace( '/<a href=".+">/', '', $html );
-	$html = preg_replace( '/<\ /a>/', '', $html );
-		return $html;
-		}
-		add_filter( 'image_send_to_editor', 'image_tag_delete', 10 );
-		add_filter( 'post_thumbnail_html', 'image_tag_delete', 10 );
+
+// /**
+// * WordPressサイトの画像に自動的に付与されるclass等のタグを削除
+// **/
+// function image_tag_delete( $html ){
+//     // widthとheight属性を削除
+//     $html = preg_replace('/(width|height)="\d*"\s/', '', $html);
+//     // class属性を削除
+//     $html = preg_replace('/class=[\'"]([^\'"]+)[\'"]/i', '', $html);
+//     // title属性を削除
+//     $html = preg_replace('/title=[\'"]([^\'"]+)[\'"]/i', '', $html);
+//     // <a>タグを削除
+//     $html = preg_replace('/<a href="[^"]*">/', '', $html);
+//     $html = preg_replace('/<\/a>/', '', $html);
+//     return $html;
+// }
+// add_filter('image_send_to_editor', 'image_tag_delete', 10);
+// add_filter('post_thumbnail_html', 'image_tag_delete', 10);
+
+
+function custom_pagenavi_class($html) {
+    $html = str_replace('<div class=\'wp-pagenavi\'>', '<ul class="page-nav__pager">', $html);
+    $html = str_replace('<a', '<a class="page-nav__link"', $html);
+    $html = str_replace('<span', '<span class="page-nav__link is-current"', $html);
+    $html = str_replace('</div>', '</ul>', $html);
+    return $html;
+}
+add_filter('wp_pagenavi', 'custom_pagenavi_class');

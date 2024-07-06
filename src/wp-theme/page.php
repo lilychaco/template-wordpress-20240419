@@ -3,7 +3,8 @@
 <section class="mv">
 	<figure class="mv__img">
 		<picture>
-			<source srcset="<?php echo get_theme_file_uri(); ?>/assets/images/mv-information.jpg" media="(min-width: 768px)" />
+			<source srcset="<?php echo get_theme_file_uri(); ?>/assets/images/mv-information.jpg"
+				media="(min-width: 768px)" />
 			<img src="./assets/images/mv-information-sp.jpg" alt="ファーストビュー画像" />
 		</picture>
 	</figure>
@@ -91,7 +92,8 @@
 					<div class="contact-maparea__logo">
 						<a href="#">
 							<picture>
-								<source srcset="<?php echo get_theme_file_uri(); ?>/assets/images/codeups-contact-logo-pc.jpg" media="(min-width: 768px)" />
+								<source srcset="<?php echo get_theme_file_uri(); ?>/assets/images/codeups-contact-logo-pc.jpg"
+									media="(min-width: 768px)" />
 								<img src="./assets/images/codeups-contact-logo-sp.jpg" alt="コンタクトーロゴ" />
 							</picture>
 						</a>
@@ -130,9 +132,7 @@
 			</div>
 		</div>
 
-		<figure class="contact__fish-image">
-			<img src="./assets/images/contact-fish.png" alt="魚のイラスト" />
-		</figure>
+
 	</div>
 </section>
 

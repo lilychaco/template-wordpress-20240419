@@ -576,10 +576,10 @@
 			</div>
 		</div>
 
-		<figure class="contact__fish-image">
-			<img src="<?php echo get_theme_file_uri(); ?>/assets/images/contact-fish.png" alt="魚のイラスト" />
-		</figure>
+
 	</div>
 </section>
-
+<div class="contact-wrapper">
+	<?php get_template_part('common/contact') ?>
+</div>
 <?php get_footer(); ?>
