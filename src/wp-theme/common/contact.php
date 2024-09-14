@@ -48,7 +48,7 @@
 					</p>
 				</div>
 				<div class="contact__button">
-					<a href="./page-contact.html" class="button">Contact us</a>
+					<a href="<?php echo esc_url(home_url('/contact')); ?>" class="button">Contact us</a>
 				</div>
 			</div>
 		</div>

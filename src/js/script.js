@@ -28,14 +28,50 @@ jQuery(function ($) {
       return false;
     });
 
-    // タブメニューの初期設定
-    $(".js-content:first-of-type").show();
-    $(".js-tab").on("click", function () {
-      $(".current").removeClass("current");
-      $(this).addClass("current");
-      const index = $(this).index();
-      $(".js-content").hide().eq(index).fadeIn(300);
+		//インフォメーションメージ タブメニューの設定
+		$(document).ready(function () {
+      // 初期設定として一番目のタブを表示
+      $(".js-content").hide().first().show();
+      $(".js-tab").first().addClass("current");
+
+      const hash = window.location.hash;
+      if (hash) {
+        $(".js-tab").removeClass("current");
+        $(".js-content").hide();
+
+        const targetTab = $(`#${hash.substring(1)}`);
+        if (targetTab.length) {
+          const tabIndex = targetTab.closest(".js-tab").index();
+          $(".js-tab").eq(tabIndex).addClass("current");
+          $(".js-content").eq(tabIndex).fadeIn(300);
+        }
+      }
+
+      $(".js-tab").on("click", function (event) {
+        const $clickedTab = $(event.target); // クリックされたタブを取得
+        const index = $clickedTab.index();
+
+        $(".current").removeClass("current");
+        $clickedTab.addClass("current");
+
+        $(".js-content").hide().eq(index).fadeIn(300);
+
+        const tabId = $clickedTab.find("p").attr("id");
+        if (tabId) {
+          window.location.hash = tabId;
+        }
+      });
     });
+
+
+
+
+
+
+
+
+
+
 
     // アーカイブメニューの動作
     $(".js-year-toggle").click(function () {
