@@ -9,8 +9,6 @@
 	<h2 class="mv__title">blog</h2>
 </section>
 
-<?php get_template_part('common/breadcrumb') ?>
-<!-- otameshi-->
 <div class="blog blog-layout">
 	<div class="blog__inner inner">
 		<div class="blog__container fish">
@@ -87,10 +85,8 @@
 	</div>
 </div>
 
-
-
-
 <div class="contact-wrapper">
-	<?php get_template_part('common/contact') ?>
+	<?php get_template_part('common/contact'); ?>
 </div>
+
 <?php get_footer(); ?>

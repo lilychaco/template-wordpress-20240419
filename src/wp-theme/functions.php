@@ -18,6 +18,11 @@ function theme_enqueue_styles() {
     wp_enqueue_script('jquery-inview', get_template_directory_uri() . '/assets/js/jquery.inview.min.js', array('jquery-cdn'), null, true);
     wp_enqueue_script('custom-script', get_template_directory_uri() . '/assets/js/script.js', array('jquery-cdn'), null, true);
 
+		 // 特定のページスラッグが「contact」または「contact/error」の場合のみ、cf7-redirect.jsを読み込む
+    if ( is_page( array( 'contact', 'error' ) ) ) {
+        wp_enqueue_script('cf7-redirect-script', get_template_directory_uri() . '/assets/js/cf7-redirect.js', array('jquery'), null, true);
+    }
+
     // jQuery UI CSS
     wp_enqueue_style('jquery-ui-css', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', array(), null);
 
@@ -25,7 +30,8 @@ function theme_enqueue_styles() {
     wp_enqueue_style('swiper-css', 'https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css', array(), null);
 
     // ローカルCSSファイル
-    wp_enqueue_style('custom-style', get_template_directory_uri() . '/assets/css/styles.css', array(), null);
+    $theme_version = wp_get_theme()->get('Version');
+    wp_enqueue_style('custom-style', get_template_directory_uri() . '/assets/css/styles.css', array(), $theme_version);
 }
 add_action('wp_enqueue_scripts', 'theme_enqueue_styles');
 
@@ -197,11 +203,6 @@ add_action('wp_enqueue_scripts', 'enqueue_swiper_assets');
 
 
 
-
-
-
-
-
 //pagenavi
 function custom_pagenavi_html($html) {
     // <div>が<ul>になっている部分を正しく修正する
@@ -218,7 +219,6 @@ function custom_pagenavi_html($html) {
     return $html;
 }
 add_filter('wp_pagenavi', 'custom_pagenavi_html');
-
 
 
 
@@ -257,7 +257,7 @@ function my_metabox_content($post) {
     if (!is_wp_error($all_tags)) {
         foreach ($all_tags as $tag) {
             $checked = in_array($tag->term_id, $ids) ? " checked='checked'" : "";
-            $id = 'voice_tag-' . $tag->term_id;
+            $id = 'voice_tag-' . esc_attr($tag->term_id); // エスケープ処理
             echo "<li id='{$id}'>";
             echo "<label><input type='checkbox' name='tax_input[voice_tag][]' id='in-$id' value='$tag->slug'{$checked} /> $tag->name</label><br />";
             echo "</li>";
@@ -270,29 +270,49 @@ function my_metabox_content($post) {
 /*-----------------------------------
  メインループのクエリセット
 -----------------------------------*/
-function pickup_sort( $query ) {
-    //管理画面は除外
-    if ( is_admin() || ! $query->is_main_query() ) {
+
+function modify_custom_queries($query) {
+    // 管理画面やメインクエリ以外には適用しない
+    if (is_admin() || !$query->is_main_query()) {
         return;
     }
-    if ( $query->is_front_page() ) {
-        //トップページの表示件数
-        $query->set( 'posts_per_page', -1 );
 
-    } elseif ( $query->is_post_type_archive('voice') ) {
-        //投稿タイプvoice
-        $query->set( 'posts_per_page', 6 );
+    // トップページの場合の設定
+    if ($query->is_front_page()) {
+        $query->set('posts_per_page', -1); // 全件表示
 
-		} elseif ( $query->is_post_type_archive('campaign') ) {
-        //投稿タイプvoice
-        $query->set( 'posts_per_page', 6 );
+    // 'voice' カスタム投稿タイプのアーカイブページの場合の設定
+    } elseif ($query->is_post_type_archive('voice')) {
+        $query->set('posts_per_page', 6); // 6件表示
+        if (isset($_GET['term']) && $_GET['term'] !== 'all') {
+            $query->set('tax_query', array(
+                array(
+                    'taxonomy' => 'voice_category',
+                    'field' => 'slug',
+                    'terms' => sanitize_text_field($_GET['term']),
+                ),
+            ));
+        }
 
-    } elseif( $query->is_tax('hoge-cat') ) {
-        //投稿タイプhogeのタクソノミー
-        $query->set( 'posts_per_page', -1 );
+    // 'campaign' カスタム投稿タイプのアーカイブページの場合の設定
+    } elseif ($query->is_post_type_archive('campaign')) {
+        $query->set('posts_per_page', 6); // 6件表示
+        if (isset($_GET['term']) && $_GET['term'] !== 'all') {
+            $query->set('tax_query', array(
+                array(
+                    'taxonomy' => 'campaign-category',
+                    'field' => 'slug',
+                    'terms' => sanitize_text_field($_GET['term']),
+                ),
+            ));
+        }
+
+    // 'hoge-cat' タクソノミーの場合の設定
+    } elseif ($query->is_tax('hoge-cat')) {
+        $query->set('posts_per_page', -1); // 全件表示
     }
 }
-add_action( 'pre_get_posts', 'pickup_sort' );
+add_action('pre_get_posts', 'modify_custom_queries');
 
 
 
@@ -336,12 +356,23 @@ scf オプションページ
  * @param string $menu_slug オプションページのスラッグ。ユニークな値にすること。
  * @param string|null $icon_url メニューに表示するアイコンの URL
  * @param int $position メニューの位置
- */
-SCF::add_options_page( '料金一覧', '料金リスト', 'manage_options', 'theme-options' );
+ **/
+ if (class_exists('SCF')) {
+    SCF::add_options_page( '料金一覧', '料金リスト', 'manage_options', 'theme-options' );
+} else {
+    error_log('Smart Custom Fieldsプラグインがインストールされていないため、オプションページを追加できません。');
+}
+
+
 
 /*-----------------------------------
 投稿ビュー数を カスタムフィールドpost_views_countに、記録する
 -----------------------------------*/
+/**
+ * 投稿ビュー数をカウントする関数
+ *
+ * @param int $postID 投稿ID
+ */
 function set_post_views($postID) {
     $count_key = 'post_views_count';
     $count = get_field($count_key, $postID);
@@ -355,7 +386,7 @@ function set_post_views($postID) {
 }
 
 function track_post_views($post_id) {
-    if (!is_single()) return;
+    if (!is_single() || is_admin()) return; // 管理画面ではカウントしない
     if (empty($post_id)) {
         global $post;
         $post_id = $post->ID;
@@ -368,3 +399,62 @@ add_action('wp_head', 'track_post_views');
 /*-----------------------------------
 特定の固定ページにだけSmart Custom Fieldsの入力欄を表示させる
 -----------------------------------*/
+
+
+
+/*-----------------------------------
+ContactForm7で自動挿入されるPタグ、brタグを削除
+-----------------------------------*/
+  add_filter('wpcf7_autop_or_not', 'wpcf7_autop_return_false');
+  function wpcf7_autop_return_false() {
+    return false;
+  }
+
+
+
+
+
+
+
+/*-----------------------------------
+Contact Form 7 ローカルストレージにデータを保存する
+-----------------------------------*/
+
+
+/*-----------------------------------
+Contact Form 7 エラーページでデータを復元する
+-----------------------------------*/
+
+
+/*-----------------------------------
+Contact Form 7 ローカルストレージに残ったデータを削除
+-----------------------------------*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*-----------------------------------
+フィルターで送信ボタンを<button>に変更
+-----------------------------------*/
+// function custom_cf7_submit_button( $tag ) {
+//     // 送信ボタンのフィールドかどうかを確認
+//     if ( $tag['name'] === 'your-submit' ) {
+//         // ボタンのHTMLを作成
+//         $tag['content'] = '<button type="submit" id="button-send" class="wpcf7-form-control wpcf7-submit button--send">Send</button>';
+//     }
+//     return $tag;
+// }
+// add_filter( 'wpcf7_form_tag', 'custom_cf7_submit_button', 10, 1 );

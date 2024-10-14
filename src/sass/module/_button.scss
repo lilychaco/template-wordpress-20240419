@@ -1,4 +1,4 @@
-@use "global" as *;
+@use "global"as *;
 
 .button {
   position: relative;
@@ -16,9 +16,12 @@
   letter-spacing: 0;
   cursor: pointer;
   transition: ease 0.2s;
-  box-sizing: border-box; /* ボックスサイジングを追加 */
-  border: 1px solid transparent; /* ホバー前のボーダーを透明に設定 */
+  box-sizing: border-box;
+  /* ボックスサイジングを追加 */
+  border: 1px solid transparent;
+  /* ホバー前のボーダーを透明に設定 */
 }
+
 .button::before {
   content: "";
   position: absolute;
@@ -33,6 +36,7 @@
 .button span {
   text-transform: uppercase;
 }
+
 .button::after {
   content: "";
   position: absolute;
@@ -59,5 +63,4 @@
 
 .button--send {
   padding: rem(18) 0 rem(14) rem(52);
-
 }

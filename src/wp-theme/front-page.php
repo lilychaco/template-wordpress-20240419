@@ -58,164 +58,73 @@
 		<div class="swiper-button custom-swiper-button-next"></div>
 
 		<div class="top-campaign__cards-wrapper swiper js-campaign-swiper">
+			<?php
+				// カスタム投稿「campaign」を取得するためのWP_Query
+				$args = [
+		    'post_type' => 'campaign', // カスタム投稿タイプ「campaign」を指定
+  		  'posts_per_page' => -1, // 全ての投稿を取得（必要に応じて数を変更）
+				];
+
+				$campaign_query = new WP_Query($args);
+
+				if ($campaign_query->have_posts()) :
+				?>
+
 			<ul class="top-campaign__cards campaign-cards swiper-wrapper">
+				<?php while ($campaign_query->have_posts()) : $campaign_query->the_post(); ?>
 				<li class="campaign-cards__item campaign-card swiper-slide">
 					<figure class="campaign-card__img">
-						<img src="<?php echo get_theme_file_uri(); ?>/assets/images/campaign1.jpg" alt="キャンペーンの画像" />
+						<?php if (has_post_thumbnail()) : ?>
+						<!-- 投稿にサムネイルが設定されている場合 -->
+						<img src="<?php echo get_the_post_thumbnail_url(); ?>" alt="<?php the_title_attribute(); ?>" />
+						<?php else : ?>
+						<!-- 画像がない場合はデフォルト画像を表示 -->
+						<img src="<?php echo esc_url(get_theme_file_uri('assets/images/campaign1.jpg')); ?>" alt="デフォルト画像" />
+						<?php endif; ?>
 					</figure>
 					<div class="campaign-card__body">
 						<div class="campaign-card__top">
-							<div class="campaign-card__category">ライセンス講習</div>
-							<div class="campaign-card__title">ライセンス取得</div>
+							<div class="campaign-card__category">
+								<?php echo (get_field('category')) ? esc_html(get_field('category')) : 'カテゴリ未設定'; ?></div>
+							<div class="campaign-card__title"><?php the_title(); ?></div>
 						</div>
 						<div class="campaign-card__text">
 							<p class="campaign-card__price-info">
 								全部コミコミ(お一人様)
 							</p>
 							<p class="campaign-card__price-text">
-								<span>¥56,000</span>¥46,000
+								<?php
+									// 古い価格を取得
+									$old_price = get_field('campaign-price_old');
+									// 新しい価格を取得
+									$new_price = get_field('campaign-price_new');
+
+									// 古い価格と新しい価格をそのまま表示
+									if ($old_price && $new_price) {
+											echo '<span>' . esc_html($old_price) . '</span> ' . esc_html($new_price);
+									} else {
+											echo '価格未設定';
+									}
+									?>
 							</p>
+
+
+
 						</div>
 					</div>
 				</li>
-				<li class="campaign-cards__item campaign-card swiper-slide">
-					<figure class="campaign-card__img">
-						<img src="<?php echo get_theme_file_uri(); ?>/assets/images/campaign2.jpg" alt="キャンペーンの画像" />
-					</figure>
-					<div class="campaign-card__body">
-						<div class="campaign-card__top">
-							<div class="campaign-card__category">体験ダイビング</div>
-							<div class="campaign-card__title">貸切体験ダイビング</div>
-						</div>
-						<div class="campaign-card__text">
-							<div class="campaign-card__price-info">
-								全部コミコミ(お一人様)
-							</div>
-							<div class="campaign-card__price-text">
-								<span>¥24,000</span>¥18,000
-							</div>
-						</div>
-					</div>
-				</li>
-				<li class="campaign-cards__item campaign-card swiper-slide">
-					<figure class="campaign-card__img">
-						<img src="<?php echo get_theme_file_uri(); ?>/assets/images/campaign3.jpg" alt="キャンペーンの画像" />
-					</figure>
-					<div class="campaign-card__body">
-						<div class="campaign-card__top">
-							<div class="campaign-card__category">体験ダイビング</div>
-							<div class="campaign-card__title">ナイトダイビング</div>
-						</div>
-						<div class="campaign-card__text">
-							<div class="campaign-card__price-info">
-								全部コミコミ(お一人様)
-							</div>
-							<div class="campaign-card__price-text">
-								<span>¥10,000</span>¥8,000
-							</div>
-						</div>
-					</div>
-				</li>
-				<li class="campaign-cards__item campaign-card swiper-slide">
-					<figure class="campaign-card__img">
-						<img src="<?php echo get_theme_file_uri(); ?>/assets/images/campaign4.jpg" alt="キャンペーンの画像" />
-					</figure>
-					<div class="campaign-card__body">
-						<div class="campaign-card__top">
-							<div class="campaign-card__category">ファンダイビング</div>
-							<div class="campaign-card__title">貸切ファンダイビング</div>
-						</div>
-						<div class="campaign-card__text">
-							<div class="campaign-card__price-info">
-								全部コミコミ(お一人様)
-							</div>
-							<div class="campaign-card__price-text">
-								<span>¥56,000</span>¥46,000
-							</div>
-						</div>
-					</div>
-				</li>
-				<li class="campaign-cards__item campaign-card swiper-slide">
-					<figure class="campaign-card__img">
-						<img src="<?php echo get_theme_file_uri(); ?>/assets/images/campaign1.jpg" alt="キャンペーンの画像" />
-					</figure>
-					<div class="campaign-card__body">
-						<div class="campaign-card__top">
-							<div class="campaign-card__category">ライセンス講習</div>
-							<div class="campaign-card__title">ライセンス取得</div>
-						</div>
-						<div class="campaign-card__text campaign-price">
-							<div class="campaign-card__price-info">
-								全部コミコミ(お一人様)
-							</div>
-							<div class="campaign-card__price-text">
-								<span>¥56,000</span>¥46,000
-							</div>
-						</div>
-					</div>
-				</li>
-				<li class="campaign-cards__item campaign-card swiper-slide">
-					<figure class="campaign-card__img">
-						<img src="<?php echo get_theme_file_uri(); ?>/assets/images/campaign1.jpg" alt="キャンペーンの画像" />
-					</figure>
-					<div class="campaign-card__body">
-						<div class="campaign-card__top">
-							<div class="campaign-card__category">ライセンス講習</div>
-							<div class="campaign-card__title">ライセンス取得</div>
-						</div>
-						<div class="campaign-card__text">
-							<div class="campaign-card__price-info">
-								全部コミコミ(お一人様)
-							</div>
-							<div class="campaign-card__price-text">
-								<span>¥56,000</span>¥46,000
-							</div>
-						</div>
-					</div>
-				</li>
-				<li class="campaign-cards__item campaign-card swiper-slide">
-					<figure class="campaign-card__img">
-						<img src="<?php echo get_theme_file_uri(); ?>/assets/images/campaign1.jpg" alt="キャンペーンの画像" />
-					</figure>
-					<div class="campaign-card__body">
-						<div class="campaign-card__top">
-							<div class="campaign-card__category">ライセンス講習</div>
-							<div class="campaign-card__title">ライセンス取得</div>
-						</div>
-						<div class="campaign-card__text">
-							<div class="campaign-card__price-info">
-								全部コミコミ(お一人様)
-							</div>
-							<div class="campaign-card__price-text">
-								<span>¥56,000</span>¥46,000
-							</div>
-						</div>
-					</div>
-				</li>
-				<li class="campaign-cards__item campaign-card swiper-slide">
-					<figure class="campaign-card__img">
-						<img src="<?php echo get_theme_file_uri(); ?>/assets/images/campaign2.jpg" alt="キャンペーンの画像" />
-					</figure>
-					<div class="campaign-card__body">
-						<div class="campaign-card__top">
-							<div class="campaign-card__category">体験ダイビング</div>
-							<div class="campaign-card__title">貸切体験ダイビング</div>
-						</div>
-						<div class="campaign-card__text">
-							<div class="campaign-card__price-info">
-								全部コミコミ(お一人様)
-							</div>
-							<div class="campaign-card__price-text">
-								<span>¥24,000</span>¥18,000
-							</div>
-						</div>
-					</div>
-				</li>
+				<?php endwhile; ?>
 			</ul>
+			<?php
+				else :
+    		echo '<p>キャンペーン情報はありません。</p>';
+				endif;
+				wp_reset_postdata(); // クエリのリセット
+				?>
 		</div>
 
 		<div class="top-campaign__button">
-			<a href="archive-campaign.html" class="button">View&nbsp;more</a>
+			<a href="<?php echo esc_url(home_url('/campaign')); ?>" class="button">View&nbsp;more</a>
 		</div>
 	</div>
 </section>
@@ -529,58 +438,9 @@
 	</div>
 </section>
 
-<section class="contact-layout contact inner" id="contact">
-	<div class="contact__inner">
-		<div class="contact__container">
-			<div class="contact-maparea">
-				<div class="contact-maparea__top">
-					<div class="contact-maparea__logo">
-						<a href="#">
-							<picture>
-								<source srcset="<?php echo get_theme_file_uri(); ?>/assets/images/codeups-contact-logo-pc.jpg"
-									media="(min-width: 768px)" />
-								<img src="<?php echo get_theme_file_uri(); ?>/assets/images/codeups-contact-logo-sp.jpg"
-									alt="コンタクトーロゴ" />
-							</picture>
-						</a>
-					</div>
-				</div>
-				<div class="contact-maparea__body">
-					<div class="contact-maparea__address">
-						<p>沖縄県那覇市1-1</p>
-						<p>TEL:0120-000-0000</p>
-						<p>営業時間:8:30-19:00</p>
-						<p>定休日:毎週火曜日</p>
-					</div>
-					<div class="contact-maparea__map-wrapper">
-						<div class="contact-maparea__map">
-							<iframe
-								src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3506.2808799997147!2d129.6873916108525!3d28.50119587563551!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x351f9e89e0a00569%3A0xb48efef363eb23ad!2z44OA44Kk44OT44Oz44Kw44K344On44OD44OX44ON44OQ44O844Op44Oz44OJ!5e0!3m2!1sja!2sjp!4v1702196498890!5m2!1sja!2sjp"
-								width="100%" height="auto" style="border: 0" allowfullscreen="" loading="lazy"
-								referrerpolicy="no-referrer-when-downgrade"></iframe>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="contact__cta">
-				<div class="contact__heading section-heading">
-					<h3 class="section-heading__title section-heading__title--contact">
-						Contact
-					</h3>
-					<h2 class="section-heading__subtitle section-heading__subtitle--contact u-desktop">
-						お問い合わせ
-					</h2>
-					<h2 class="section-heading__subtitle section-heading__subtitle--contact u-mobile">
-						お問合せ
-					</h2>
-					<p class="section-heading__text">ご予約・お問い合わせはコチラ</p>
-				</div>
-				<div class="contact__button">
-					<a href="./page-contact.html" class="button">Contact us</a>
-				</div>
-			</div>
-		</div>
-	</div>
-</section>
+<div class="contact-wrapper">
+	<?php get_template_part('common/contact') ?>
+</div>
+
 
 <?php get_footer(); ?>

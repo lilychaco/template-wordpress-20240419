@@ -23,7 +23,8 @@
         ?>
 			<div class="accordion__item accordion-card">
 				<div class="accordion-card__top js-accordion-top is-open">
-					<h3 class="accordion-card__title"><?php echo nl2br(esc_html($question)); ?></h3>
+					<h3 class="accordion-card__title">
+						<?php echo nl2br(esc_html($question)); ?></h3>
 					<div class="accordion-card__icon">
 						<div class="accordion-card__bar1"></div>
 						<div class="accordion-card__bar2"></div>
@@ -35,25 +36,23 @@
 					<?php } ?>
 				</div>
 			</div>
+			<?php } ?>
 			<?php
-				}
-
-				// 取得したデータが空でないかをチェックします。
-				if (!empty($faq)) {
-						// 取得した繰り返しフィールドの各アイテムをループで処理します。
-						foreach ($faq as $item) {
-								// 各アイテムの 'question' フィールドの値を取得し、表示します。
-								if (!empty($item['question'])) {
-										display_accordion_item($item['question'], $item['answer'] ?? '');
-								}
-        }
-    } else {
-        // 繰り返しフィールドが空の場合のメッセージ
-        display_accordion_item('よくある質問がありません。', '');
-    }
-    ?>
+			// 取得したデータが空でないかをチェックします。
+			if (!empty($faq)) {
+			// 取得した繰り返しフィールドの各アイテムをループで処理します。
+			foreach ($faq as $item) {
+			// 各アイテムの 'question' フィールドの値を取得し、表示します。
+			if (!empty($item['question'])) {
+			display_accordion_item($item['question'], $item['answer'] ?? '');
+			}
+			}
+			} else {
+			// 繰り返しフィールドが空の場合のメッセージ
+			display_accordion_item('よくある質問がありません。', '');
+			}
+			?>
 		</div>
-
 	</div>
 </div>
 
