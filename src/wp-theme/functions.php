@@ -1,37 +1,33 @@
 <?php
 
 function theme_enqueue_styles() {
-    // ファビコン
-    // コメントアウトしているので、使用する場合は適切なファビコンのパスを設定してください
-    // echo '<link rel="icon" href="' . get_template_directory_uri() . '/path/to/favicon.ico" />';
+    // Google Fontsの読み込み
+    wp_enqueue_style('mytheme-google-fonts', 'https://fonts.googleapis.com/css2?family=Lato&family=Gotu&family=Noto+Sans+JP:wght@400;500;700&display=swap', [], null);
 
-    // フォント
-    wp_enqueue_style('google-fonts', 'https://fonts.googleapis.com/css2?family=Lato&family=Gotu&family=Noto+Sans+JP:wght@400;500;700&display=swap', array(), null);
+    // jQueryを読み込む（WordPressの標準jQuery）
+    wp_enqueue_script('jquery');
 
-    // jQuery（CDNからの読み込み）
-    wp_enqueue_script('jquery-cdn', 'https://code.jquery.com/jquery-3.6.0.js', array(), null, true);
 
-    // Swiper JS
-    wp_enqueue_script('swiper-js', 'https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js', array(), null, true);
 
-    // ローカルJavaScriptファイル
-    wp_enqueue_script('jquery-inview', get_template_directory_uri() . '/assets/js/jquery.inview.min.js', array('jquery-cdn'), null, true);
-    wp_enqueue_script('custom-script', get_template_directory_uri() . '/assets/js/script.js', array('jquery-cdn'), null, true);
+    //contactページのみで使用するJavaScriptの読み込み
+    // if ( is_page('contact') ) {
+    //     wp_enqueue_script('cf7-redirect-script', get_template_directory_uri() . '/assets/js/cf7-redirect.js', ['jquery'], null, true);
+    // }
 
-		 // 特定のページスラッグが「contact」または「contact/error」の場合のみ、cf7-redirect.jsを読み込む
-    if ( is_page( array( 'contact', 'error' ) ) ) {
-        wp_enqueue_script('cf7-redirect-script', get_template_directory_uri() . '/assets/js/cf7-redirect.js', array('jquery'), null, true);
-    }
+    // Swiper JSとそのCSSの読み込み
+    wp_enqueue_script('mytheme-swiper-js', 'https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js', [], null, true);
+    wp_enqueue_style('mytheme-swiper-css', 'https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css', [], null);
 
-    // jQuery UI CSS
-    wp_enqueue_style('jquery-ui-css', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', array(), null);
+    // ローカルJavaScriptファイルの読み込み
+    wp_enqueue_script('jquery-inview', get_template_directory_uri() . '/assets/js/jquery.inview.min.js', ['jquery'], null, true);
+    wp_enqueue_script('custom-script', get_template_directory_uri() . '/assets/js/script.js', ['jquery'], null, true);
 
-    // Swiper CSS
-    wp_enqueue_style('swiper-css', 'https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css', array(), null);
+    // jQuery UI CSSの読み込み
+    wp_enqueue_style('jquery-ui-css', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], null);
 
-    // ローカルCSSファイル
+    // ローカルCSSファイルの読み込み
     $theme_version = wp_get_theme()->get('Version');
-    wp_enqueue_style('custom-style', get_template_directory_uri() . '/assets/css/styles.css', array(), $theme_version);
+    wp_enqueue_style('custom-style', get_template_directory_uri() . '/assets/css/styles.css', [], $theme_version);
 }
 add_action('wp_enqueue_scripts', 'theme_enqueue_styles');
 
@@ -410,7 +406,32 @@ ContactForm7で自動挿入されるPタグ、brタグを削除
     return false;
   }
 
+/*-----------------------------------
+// CF7送信後にリダイレクト
+-----------------------------------*/
+// CF7送信後にリダイレクト
+add_action('wp_footer', 'redirect_cf7');
+function redirect_cf7() {
+    ?>
+<script type="text/javascript">
+document.addEventListener('wpcf7mailsent', function(event) {
+	window.location.href = 'https://ninikokoji.com/diving-lily/contact/thanks/'; // サンクスページのURLにリダイレクト
+}, false);
+</script>
+<?php
+}
 
+// CF7送信エラー時にエラーページにリダイレクト
+add_action('wp_footer', 'redirect_cf7_error');
+function redirect_cf7_error() {
+    ?>
+<script type="text/javascript">
+document.addEventListener('wpcf7invalid', function(event) {
+	window.location.href = 'https://ninikokoji.com/diving-lily/contact/error/'; // エラーページのURL
+}, false);
+</script>
+<?php
+}
 
 
 
@@ -419,16 +440,54 @@ ContactForm7で自動挿入されるPタグ、brタグを削除
 /*-----------------------------------
 Contact Form 7 ローカルストレージにデータを保存する
 -----------------------------------*/
+add_action('wp_footer', 'save_cf7_data_to_localstorage');
+function save_cf7_data_to_localstorage() {
+    ?>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+	document.querySelectorAll('.wpcf7-form input, .wpcf7-form textarea').forEach(function(input) {
+		input.addEventListener('input', function() {
+			localStorage.setItem(input.name, input.value);
+		});
+	});
+});
+</script>
+<?php
+}
 
 
 /*-----------------------------------
 Contact Form 7 エラーページでデータを復元する
 -----------------------------------*/
+add_action('wp_footer', 'restore_cf7_data_from_localstorage');
+function restore_cf7_data_from_localstorage() {
+    ?>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+	document.querySelectorAll('.wpcf7-form input, .wpcf7-form textarea').forEach(function(input) {
+		if (localStorage.getItem(input.name)) {
+			input.value = localStorage.getItem(input.name);
+		}
+	});
+});
+</script>
+<?php
+}
 
 
 /*-----------------------------------
 Contact Form 7 ローカルストレージに残ったデータを削除
 -----------------------------------*/
+add_action('wp_footer', 'clear_cf7_data_after_submission');
+function clear_cf7_data_after_submission() {
+    ?>
+<script type="text/javascript">
+document.addEventListener('wpcf7mailsent', function(event) {
+	localStorage.clear();
+}, false);
+</script>
+<?php
+}
 
 
 
