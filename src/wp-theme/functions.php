@@ -490,8 +490,38 @@ document.addEventListener('wpcf7mailsent', function(event) {
 }
 
 
+/*-----------------------------------
+CPT UIで作成したタクソノミーを基に、セレクトボックスを動的に生成
+-----------------------------------*/
 
+function filter_wpcf7_form_tag( $scanned_tag, $replace ) {
+  if (!empty($scanned_tag)) {
+    // CF7フォームタグのname属性が "menu_name" の場合に処理
+    if ($scanned_tag['name'] == 'menu_name') {
+      // タクソノミーのターム一覧を取得
+      $terms = get_terms([
+        'taxonomy'   => 'campaign-category', // タクソノミーのスラッグ
+        'hide_empty' => false,              // 空のタームも含める（trueにすると非表示）
+      ]);
 
+			// デフォルトの選択肢を最初に追加
+      $scanned_tag['values'][] = ''; // 値を空にすることで未選択状態にする
+      $scanned_tag['labels'][] = 'キャンペーン内容を選択'; // ラベル（表示名）
+
+      // 取得したタームをセレクトボックスの選択肢に追加
+      if (!is_wp_error($terms) && !empty($terms)) {
+        foreach ($terms as $term) {
+          $scanned_tag['values'][] = $term->slug; // 選択肢の値（スラッグ）
+          $scanned_tag['labels'][] = $term->name; // ラベル（表示名）
+        }
+      }
+    }
+  }
+  return $scanned_tag; // 修正済みのフォームタグを返す
+}
+
+// フィルターフックに登録
+add_filter('wpcf7_form_tag', 'filter_wpcf7_form_tag', 11, 2);
 
 
 
