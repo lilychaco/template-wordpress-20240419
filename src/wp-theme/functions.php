@@ -7,13 +7,6 @@ function theme_enqueue_styles() {
     // jQueryを読み込む（WordPressの標準jQuery）
     wp_enqueue_script('jquery');
 
-
-
-    //contactページのみで使用するJavaScriptの読み込み
-    // if ( is_page('contact') ) {
-    //     wp_enqueue_script('cf7-redirect-script', get_template_directory_uri() . '/assets/js/cf7-redirect.js', ['jquery'], null, true);
-    // }
-
     // Swiper JSとそのCSSの読み込み
     wp_enqueue_script('mytheme-swiper-js', 'https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js', [], null, true);
     wp_enqueue_style('mytheme-swiper-css', 'https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css', [], null);
@@ -21,6 +14,7 @@ function theme_enqueue_styles() {
     // ローカルJavaScriptファイルの読み込み
     wp_enqueue_script('jquery-inview', get_template_directory_uri() . '/assets/js/jquery.inview.min.js', ['jquery'], null, true);
     wp_enqueue_script('custom-script', get_template_directory_uri() . '/assets/js/script.js', ['jquery'], null, true);
+		  wp_enqueue_script('custom-script', get_template_directory_uri() . '/assets/js/custom-slider.js', ['jquery'], null, true);
 
     // jQuery UI CSSの読み込み
     wp_enqueue_style('jquery-ui-css', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], null);
@@ -54,51 +48,6 @@ function my_setup() {
 }
 add_action( 'after_setup_theme', 'my_setup' );
 
-
-
-
-
-/**
-* メニューの登録
-*
-* @codex
-* https://wpdocs.osdn.jp/%E9%96%A2%E6%95%B0%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/register_nav_menus
-*/
-// function my_menu_init() {
-// register_nav_menus(
-// array(
-// 'global' => 'ヘッダーメニュー',
-// 'utility' => 'ユーティリティメニュー',
-// 'drawer' => 'ドロワーメニュー',
-// )
-// );
-// }
-// add_action( 'init', 'my_menu_init' );
-/**
-* メニューの登録
-*
-* 参考：https://wpdocs.osdn.jp/%E9%96%A2%E6%95%B0%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/register_nav_menus
-*/
-
-
-/**
-* ウィジェットの登録
-*
-* @codex http://wpdocs.osdn.jp/%E9%96%A2%E6%95%B0%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/register_sidebar
-*/
-// function my_widget_init() {
-// register_sidebar(
-// array(
-// 'name' => 'サイドバー',
-// 'id' => 'sidebar',
-// 'before_widget' => '<div id="%1$s" class="p-widget %2$s">',
-	// 'after_widget' => '</div>',
-// 'before_title' => '<div class="p-widget__title">',
-	// 'after_title' => '</div>',
-// )
-// );
-// }
-// add_action( 'widgets_init', 'my_widget_init' );
 
 
 /**
@@ -167,20 +116,20 @@ add_filter( 'excerpt_more', 'my_excerpt_more' );
 // /**
 // * WordPressサイトの画像に自動的に付与されるclass等のタグを削除
 // **/
-// function image_tag_delete( $html ){
-//     // widthとheight属性を削除
-//     $html = preg_replace('/(width|height)="\d*"\s/', '', $html);
-//     // class属性を削除
-//     $html = preg_replace('/class=[\'"]([^\'"]+)[\'"]/i', '', $html);
-//     // title属性を削除
-//     $html = preg_replace('/title=[\'"]([^\'"]+)[\'"]/i', '', $html);
-//     // <a>タグを削除
-//     $html = preg_replace('/<a href="[^"]*">/', '', $html);
-//     $html = preg_replace('/<\/a>/', '', $html);
-//     return $html;
-// }
-// add_filter('image_send_to_editor', 'image_tag_delete', 10);
-// add_filter('post_thumbnail_html', 'image_tag_delete', 10);
+function image_tag_delete( $html ){
+    // widthとheight属性を削除
+    $html = preg_replace('/(width|height)="\d*"\s/', '', $html);
+    // class属性を削除
+    $html = preg_replace('/class=[\'"]([^\'"]+)[\'"]/i', '', $html);
+    // title属性を削除
+    $html = preg_replace('/title=[\'"]([^\'"]+)[\'"]/i', '', $html);
+    // <a>タグを削除
+    $html = preg_replace('/<a href="[^"]*">/', '', $html);
+    $html = preg_replace('/<\/a>/', '', $html);
+    return $html;
+}
+add_filter('image_send_to_editor', 'image_tag_delete', 10);
+add_filter('post_thumbnail_html', 'image_tag_delete', 10);
 
 /*-----------------------------------
 // フロントビューJavaScriptスライダーを実装
@@ -522,16 +471,6 @@ function filter_wpcf7_form_tag( $scanned_tag, $replace ) {
 
 // フィルターフックに登録
 add_filter('wpcf7_form_tag', 'filter_wpcf7_form_tag', 11, 2);
-
-
-
-
-
-
-
-
-
-
 
 
 

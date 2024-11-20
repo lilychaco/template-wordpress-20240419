@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   //================================
     // campaignのスライダー用
-    // ==================================
+  // ==================================
 document.addEventListener("DOMContentLoaded", function () {
   let campaignSlider = new Swiper(".js-campaign-swiper", {
     loop: true,

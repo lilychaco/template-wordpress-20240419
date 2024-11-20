@@ -66,7 +66,6 @@
 				];
 
 				$campaign_query = new WP_Query($args);
-
 				if ($campaign_query->have_posts()) :
 				?>
 
