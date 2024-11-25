@@ -8,8 +8,8 @@
 	<meta name="robots" content="noindex" />
 	<!-- meta情報 -->
 	<title>CodeUps</title>
-	<meta name="description" content="" />
-	<meta name="keywords" content="" />
+	<meta name="description" content="CodeUpsのWordPress化課題サイトです" />
+	<meta name="keywords" content="CodeUps, WordPress化, lilychaco" />
 	<!-- ogp -->
 	<meta property="og:title" content="" />
 	<meta property="og:type" content="" />

@@ -168,6 +168,9 @@ add_filter('wp_pagenavi', 'custom_pagenavi_html');
 
 
 
+
+
+
 //カスタム投稿のタグをチェックボックスで入力できるようにする
 // デフォルトで表示されているメタボックスを消去するー消去できていない
 function my_tag_meta_box_remove() {
@@ -210,56 +213,6 @@ function my_metabox_content($post) {
     }
     echo '</ul></div>'; // end HTML
 }
-
-
-/*-----------------------------------
- メインループのクエリセット
------------------------------------*/
-
-function modify_custom_queries($query) {
-    // 管理画面やメインクエリ以外には適用しない
-    if (is_admin() || !$query->is_main_query()) {
-        return;
-    }
-
-    // トップページの場合の設定
-    if ($query->is_front_page()) {
-        $query->set('posts_per_page', -1); // 全件表示
-
-    // 'voice' カスタム投稿タイプのアーカイブページの場合の設定
-    } elseif ($query->is_post_type_archive('voice')) {
-        $query->set('posts_per_page', 6); // 6件表示
-        if (isset($_GET['term']) && $_GET['term'] !== 'all') {
-            $query->set('tax_query', array(
-                array(
-                    'taxonomy' => 'voice_category',
-                    'field' => 'slug',
-                    'terms' => sanitize_text_field($_GET['term']),
-                ),
-            ));
-        }
-
-    // 'campaign' カスタム投稿タイプのアーカイブページの場合の設定
-    } elseif ($query->is_post_type_archive('campaign')) {
-        $query->set('posts_per_page', 6); // 6件表示
-        if (isset($_GET['term']) && $_GET['term'] !== 'all') {
-            $query->set('tax_query', array(
-                array(
-                    'taxonomy' => 'campaign-category',
-                    'field' => 'slug',
-                    'terms' => sanitize_text_field($_GET['term']),
-                ),
-            ));
-        }
-
-    // 'hoge-cat' タクソノミーの場合の設定
-    } elseif ($query->is_tax('hoge-cat')) {
-        $query->set('posts_per_page', -1); // 全件表示
-    }
-}
-add_action('pre_get_posts', 'modify_custom_queries');
-
-
 
 
 /*-----------------------------------
@@ -427,50 +380,65 @@ document.addEventListener('DOMContentLoaded', function() {
 /*-----------------------------------
 Contact Form 7 ローカルストレージに残ったデータを削除
 -----------------------------------*/
-add_action('wp_footer', 'clear_cf7_data_after_submission');
-function clear_cf7_data_after_submission() {
+
+add_action('wp_footer', 'custom_cf7_local_storage_handler');
+function custom_cf7_local_storage_handler() {
     ?>
 <script type="text/javascript">
-document.addEventListener('wpcf7mailsent', function(event) {
-	localStorage.clear();
-}, false);
+document.addEventListener('DOMContentLoaded', function() {
+	// 現在のURLが問い合わせページかを判定
+	const isContactPage = window.location.pathname.includes('contact'); // "contact" を問い合わせページのスラッグに置き換えてください。
+
+	// 問い合わせ送信成功時にローカルストレージをクリア
+	document.addEventListener('wpcf7mailsent', function(event) {
+		localStorage.clear();
+	}, false);
+
+	// 問い合わせページ以外でローカルストレージを削除
+	if (!isContactPage) {
+		localStorage.clear();
+	}
+
+	// 問い合わせページでは何もしない（データ保持）
+});
 </script>
 <?php
 }
+
 
 
 /*-----------------------------------
 CPT UIで作成したタクソノミーを基に、セレクトボックスを動的に生成
 -----------------------------------*/
 
-function filter_wpcf7_form_tag( $scanned_tag, $replace ) {
-  if (!empty($scanned_tag)) {
-    // CF7フォームタグのname属性が "menu_name" の場合に処理
-    if ($scanned_tag['name'] == 'menu_name') {
-      // タクソノミーのターム一覧を取得
-      $terms = get_terms([
-        'taxonomy'   => 'campaign-category', // タクソノミーのスラッグ
-        'hide_empty' => false,              // 空のタームも含める（trueにすると非表示）
-      ]);
+// function filter_wpcf7_form_tag( $scanned_tag, $replace ) {
+//   if (!empty($scanned_tag)) {
+//     // CF7フォームタグのname属性が "menu_name" の場合に処理
+//     if ($scanned_tag['name'] == 'menu_name') {
+//       // タクソノミーのターム一覧を取得
+//       $terms = get_terms([
+//         'taxonomy'   => 'campaign-category', // タクソノミーのスラッグ
+//         'hide_empty' => false,              // 空のタームも含める（trueにすると非表示）
+//       ]);
 
-			// デフォルトの選択肢を最初に追加
-      $scanned_tag['values'][] = ''; // 値を空にすることで未選択状態にする
-      $scanned_tag['labels'][] = 'キャンペーン内容を選択'; // ラベル（表示名）
+// 			// デフォルトの選択肢を最初に追加
+//       $scanned_tag['values'][] = ''; // 値を空にすることで未選択状態にする
+//       $scanned_tag['labels'][] = 'キャンペーン内容を選択'; // ラベル（表示名）
 
-      // 取得したタームをセレクトボックスの選択肢に追加
-      if (!is_wp_error($terms) && !empty($terms)) {
-        foreach ($terms as $term) {
-          $scanned_tag['values'][] = $term->slug; // 選択肢の値（スラッグ）
-          $scanned_tag['labels'][] = $term->name; // ラベル（表示名）
-        }
-      }
-    }
-  }
-  return $scanned_tag; // 修正済みのフォームタグを返す
-}
+//       // 取得したタームをセレクトボックスの選択肢に追加
+//       if (!is_wp_error($terms) && !empty($terms)) {
+//         foreach ($terms as $term) {
+//           $scanned_tag['values'][] = $term->slug; // 選択肢の値（スラッグ）
+//           $scanned_tag['labels'][] = $term->name; // ラベル（表示名）
+//         }
+//       }
+//     }
+//   }
+//   return $scanned_tag; // 修正済みのフォームタグを返す
+// }
 
-// フィルターフックに登録
-add_filter('wpcf7_form_tag', 'filter_wpcf7_form_tag', 11, 2);
+// // フィルターフックに登録
+// add_filter('wpcf7_form_tag', 'filter_wpcf7_form_tag', 11, 2);
 
 
 
@@ -486,3 +454,46 @@ add_filter('wpcf7_form_tag', 'filter_wpcf7_form_tag', 11, 2);
 //     return $tag;
 // }
 // add_filter( 'wpcf7_form_tag', 'custom_cf7_submit_button', 10, 1 );
+
+/*-----------------------------------
+CPT UIで作成したカスタム投稿のタイトルを基に、セレクトボックスを動的に生成（重複排除）
+-----------------------------------*/
+
+function filter_wpcf7_form_tag_campaign_titles( $scanned_tag, $replace ) {
+  if (!empty($scanned_tag)) {
+    // CF7フォームタグのname属性が "custom_menu" の場合に処理
+    if ($scanned_tag['name'] == 'custom_menu') {
+      // カスタム投稿タイプ 'campaign' の投稿を取得
+      $posts = get_posts([
+        'post_type'      => 'campaign', // カスタム投稿タイプのスラッグ
+        'posts_per_page' => -1,         // 全ての投稿を取得
+        'post_status'    => 'publish', // 公開済みの投稿のみ取得
+        'orderby'        => 'title',   // タイトル順に並べる
+        'order'          => 'ASC',     // 昇順
+      ]);
+
+      // タイトルの重複を排除するために一時的な配列を使用
+      $added_titles = []; // 登録済みのタイトルを記録
+
+			// デフォルトの選択肢を最初に追加
+      $scanned_tag['values'][] = ''; // 値を空にすることで未選択状態にする
+      $scanned_tag['labels'][] = 'キャンペーン内容を選択'; // ラベル（表示名）
+
+      if (!empty($posts)) {
+        foreach ($posts as $post) {
+          $title = $post->post_title; // 投稿タイトル
+          if (!in_array($title, $added_titles)) {
+            // タイトルがまだ登録されていなければ追加
+            $scanned_tag['values'][] = $post->ID;   // 選択肢の値（投稿ID）
+            $scanned_tag['labels'][] = $title;      // ラベル（投稿タイトル）
+            $added_titles[] = $title;              // 登録済みタイトルに追加
+          }
+        }
+      }
+    }
+  }
+  return $scanned_tag; // 修正済みのフォームタグを返す
+}
+
+// フィルターフックに登録
+add_filter('wpcf7_form_tag', 'filter_wpcf7_form_tag_campaign_titles', 11, 2);

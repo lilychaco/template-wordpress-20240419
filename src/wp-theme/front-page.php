@@ -204,64 +204,55 @@
 			</h2>
 		</div>
 		<ul class="top-blog__cards blog-cards">
+			<?php
+			// カスタムクエリの設定
+			$args = array(
+				'post_type' => 'post', // 投稿タイプを指定
+				'posts_per_page' => 3, // 表示する投稿数を指定
+				'orderby' => 'date', // 日付でソート
+				'order' => 'DESC' // 降順
+			);
+			$query = new WP_Query($args);
+
+			// ループ開始
+			if ($query->have_posts()) :
+				while ($query->have_posts()) : $query->the_post(); ?>
 			<li class="blog-cards__item blog-card">
-				<a href="single-blog.html" class="blog-card__link">
+				<a href="<?php the_permalink(); ?>" class="blog-card__link">
 					<figure class="blog-card__img">
-						<img src="<?php echo get_theme_file_uri(); ?>/assets/images/blog01.jpg" alt="サンゴの写真" />
+						<?php
+								// 投稿のサムネイルを表示
+								if (has_post_thumbnail()) {
+									the_post_thumbnail('medium');
+								} else { ?>
+						<img src="<?php echo get_theme_file_uri(); ?>/assets/images/no-image.jpg" alt="No image available">
+						<?php } ?>
 					</figure>
 					<div class="blog-card__body">
 						<div class="blog-card__top">
-							<time datetime="2023-11-17" class="blog-card__date">2023.11.17</time>
-							<div class="blog-card__title">ライセンス取得</div>
+							<time datetime="<?php echo get_the_date('c'); ?>"
+								class="blog-card__date"><?php echo get_the_date('Y.m.d'); ?></time>
+							<div class="blog-card__title"><?php the_title(); ?></div>
 						</div>
 						<div class="blog-card__text">
-							ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。<br />
-							ここにテキストが入ります。ここにテキストが入ります。ここにテキスト
+							<?php echo wp_trim_words(get_the_excerpt(), 100, '...'); ?>
 						</div>
 					</div>
 				</a>
 			</li>
-			<li class="blog-cards__item blog-card">
-				<a href="single-blog.html" class="blog-card__link">
-					<figure class="blog-card__img">
-						<img src="<?php echo get_theme_file_uri(); ?>/assets/images/blog02.jpg" alt="ウミガメの写真" />
-					</figure>
-					<div class="blog-card__body">
-						<div class="blog-card__top">
-							<time datetime="2023-11-17" class="blog-card__date">2023.11.17</time>
-							<div class="blog-card__title">ウミガメと泳ぐ</div>
-						</div>
-						<div class="blog-card__text">
-							ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。<br />
-							ここにテキストが入ります。ここにテキストが入ります。ここにテキスト
-						</div>
-					</div>
-				</a>
-			</li>
-			<li class="blog-cards__item blog-card">
-				<a href="single-blog.html" class="blog-card__link">
-					<figure class="blog-card__img">
-						<img src="<?php echo get_theme_file_uri(); ?>/assets/images/blog03.jpg" alt="カクレクマノミの写真" />
-					</figure>
-					<div class="blog-card__body">
-						<div class="blog-card__top">
-							<time datetime="2023-11-17" class="blog-card__date">2023.11.17</time>
-							<div class="blog-card__title">カクレクマノミ</div>
-						</div>
-						<div class="blog-card__text">
-							ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。<br />
-							ここにテキストが入ります。ここにテキストが入ります。ここにテキスト
-						</div>
-					</div>
-				</a>
-			</li>
+			<?php endwhile;
+				wp_reset_postdata(); // クエリをリセット
+			else : ?>
+			<p>投稿がありません。</p>
+			<?php endif; ?>
 		</ul>
 
 		<div class="top-blog__button">
-			<a href="<?php echo esc_url(home_url('/blog')); ?>" class="button"> View more</a>
+			<a href="<?php echo esc_url(home_url('/blog')); ?>" class="button">View more</a>
 		</div>
 	</div>
 </section>
+
 
 <section class="top-voice top-voice-layout" id="voice">
 	<div class="top-voice__inner inner">

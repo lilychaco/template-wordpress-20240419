@@ -11,9 +11,10 @@
     				</a>
     			</div>
     			<div class="footer__sns">
-    				<a href="#"><img src="<?php echo get_theme_file_uri(); ?>/assets/images/facebooklogo.png" alt="フッター" /></a>
-    				<a href="#"><img src="<?php echo get_theme_file_uri(); ?>/assets/images/instagramlogo.png"
-    						alt="フッターロゴ" /></a>
+    				<a href="https://www.facebook.com/yumin.amakusa?locale=ja_JP" target=”_blank”><img
+    						src="<?php echo get_theme_file_uri(); ?>/assets/images/facebooklogo.png" alt="フッター" /></a>
+    				<a href="https://www.instagram.com/yumin52/" target=”_blank”><img
+    						src="<?php echo get_theme_file_uri(); ?>/assets/images/instagramlogo.png" alt="フッターロゴ" /></a>
     			</div>
     		</div>
     		<div class="footer__nav nav-menu">
@@ -102,6 +103,11 @@
     				<div class="nav-menu__item">
     					<a href="<?php echo esc_url(home_url('/contact')); ?>">
     						<p class="starfish-icon">お問い合わせ</p>
+    					</a>
+    				</div>
+    				<div class="nav-menu__item">
+    					<a href="<?php echo esc_url(home_url('/sitemap')); ?>">
+    						<p class="starfish-icon">サイトマップ</p>
     					</a>
     				</div>
     			</div>

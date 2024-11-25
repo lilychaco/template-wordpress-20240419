@@ -14,7 +14,7 @@
 							'taxonomy' => 'campaign-category',
 							'hide_empty' => false,
 					));
-			?>
+					?>
 			<?php if (!empty($terms)) : ?>
 			<?php foreach ($terms as $term) : ?>
 			<li class="category-list__item">
@@ -29,12 +29,35 @@
 
 		<!-- 投稿リスト部分 -->
 		<ul class="archive-campaign__content archive-campaign-cards">
-			<?php if (have_posts()) : while (have_posts()) : the_post();
-				// カスタムフィールドの値を取得
-				$price_old = get_field('campaign-price_old');
-				$price_new = get_field('campaign-price_new');
-				$period = get_field('campaign-period');
-			?>
+			<?php
+				// クエリパラメータからタームを取得
+				$term = isset($_GET['term']) ? sanitize_text_field($_GET['term']) : 'all';
+
+				// ページ番号を取得
+				$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+
+			// カスタムクエリを設定
+			$args = array(
+			'post_type' => 'campaign',
+			'posts_per_page' => 4,
+			'paged' => $paged,
+			);
+			if ($term !== 'all') {
+			$args['tax_query'] = array(
+			array(
+			'taxonomy' => 'campaign-category',
+			'field' => 'slug',
+			'terms' => $term,
+			),
+			);
+			}
+			$campaign_query = new WP_Query($args);
+			if ($campaign_query->have_posts()) : while ($campaign_query->have_posts()) : $campaign_query->the_post();
+        // カスタムフィールドの値を取得
+        $price_old = get_field('campaign-price_old');
+        $price_new = get_field('campaign-price_new');
+        $period = get_field('campaign-period');
+   			 ?>
 
 			<li class="archive-campaign-cards__item archive-campaign-card">
 				<figure class="archive-campaign-card__img">
@@ -46,15 +69,15 @@
 					<div class="archive-campaign-card__top">
 						<div class="archive-campaign-card__category">
 							<?php
-							$terms = get_the_terms(get_the_ID(), 'campaign-category');
-							if (!empty($terms) && !is_wp_error($terms)) {
-								foreach ($terms as $term) {
-									echo '<span>' . esc_html($term->name) . '</span> ';
-								}
-							} else {
-								echo '<span>カテゴリなし</span>';
-							}
-							?>
+                    $terms = get_the_terms(get_the_ID(), 'campaign-category');
+                    if (!empty($terms) && !is_wp_error($terms)) {
+                        foreach ($terms as $term) {
+                            echo '<span>' . esc_html($term->name) . '</span> ';
+                        }
+                    } else {
+                        echo '<span>カテゴリなし</span>';
+                    }
+                    ?>
 						</div>
 						<div class="archive-campaign-card__title"><?php the_title(); ?></div>
 					</div>
@@ -92,12 +115,17 @@
 			<?php endif; ?>
 		</ul>
 
+
+
+
 		<div class="archive-campaign__nav page-nav">
 			<ul class="page-nav__pager">
-				<?php if (function_exists('wp_pagenavi')) {
-					wp_pagenavi();
-				} ?>
+				<?php if ($campaign_query->max_num_pages > 1) : ?>
+				<?php wp_pagenavi(['query' => $campaign_query]); ?>
+				<?php endif; ?>
+				<?php wp_reset_postdata(); // pagenavi後にリセット ?>
 			</ul>
 		</div>
+
 	</div>
 </div>

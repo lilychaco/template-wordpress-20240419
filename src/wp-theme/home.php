@@ -10,17 +10,25 @@
 </section>
 
 <?php get_template_part('common/breadcrumb') ?>
-<!-- otameshi-->
+
 <div class="blog blog-layout">
 	<div class="blog__inner inner">
 		<div class="blog__container fish">
 			<div class="blog__main">
 				<ul class="blog__items blog-cards blog-cards--2col">
 					<?php
-						// 投稿があるかを確認する
-						if (have_posts()) :
-							// ループ開始
-							while (have_posts()) : the_post(); ?>
+						// サブループ用のクエリ設定
+						$args = [
+								'post_type'      => 'post', // 投稿タイプ（通常は'post'）
+								'posts_per_page' => 10,     // 1ページに表示する投稿数
+								'paged'          => get_query_var('paged', 1), // 現在のページ番号
+						];
+						$blog_query = new WP_Query($args); // カスタムクエリを作成
+
+						// 投稿が存在するか確認
+						if ($blog_query->have_posts()) :
+            // ループ開始
+            while ($blog_query->have_posts()) : $blog_query->the_post(); ?>
 					<!-- 投稿のループ開始 -->
 					<li class="blog-card">
 						<a href="<?php the_permalink(); ?>" class="blog-card__link">
@@ -67,7 +75,7 @@
 						<?php
 							// ページネーションを表示
 							if (function_exists('wp_pagenavi')) {
-								wp_pagenavi();
+								wp_pagenavi(['query' => $blog_query]);
 							} else {
 								the_posts_pagination([
 									'mid_size'  => 2,
@@ -76,6 +84,7 @@
 								]);
 							}
 						?>
+						<?php wp_reset_postdata(); // pagenavi後にリセット ?>
 					</div>
 				</div>
 			</div>
