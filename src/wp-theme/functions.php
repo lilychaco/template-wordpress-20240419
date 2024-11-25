@@ -147,8 +147,9 @@ function enqueue_swiper_assets() {
 add_action('wp_enqueue_scripts', 'enqueue_swiper_assets');
 
 
-
-//pagenavi
+/*-----------------------------------
+// pagenavi
+-----------------------------------*/
 function custom_pagenavi_html($html) {
     // <div>が<ul>になっている部分を正しく修正する
     $html = str_replace('<div', '<ul', $html);

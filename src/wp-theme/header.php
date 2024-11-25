@@ -11,15 +11,15 @@
 	<meta name="description" content="CodeUpsのWordPress化課題サイトです" />
 	<meta name="keywords" content="CodeUps, WordPress化, lilychaco" />
 	<!-- ogp -->
-	<meta property="og:title" content="" />
-	<meta property="og:type" content="" />
-	<meta property="og:url" content="" />
-	<meta property="og:image" content="" />
-	<meta property="og:site_name" content="" />
-	<meta property="og:description" content="" />
-
-
-
+	<meta property="og:title" content="CodeUps Diving Site - 潜る楽しさを発見しよう！" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://ninikokoji.com/diving-lily/" />
+	<meta property="og:image"
+		content="http://ninikokoji.com/diving-lily/wp-content/uploads/2024/11/iriomote1200x630.jpeg" />
+	<meta property="og:site_name" content="CodeUps Diving Site" />
+	<meta property="og:description" content="CodeUpsのWordPress化課題サイトで、ダイビングの魅力を学び、挑戦しませんか？" />
+	<meta property="og:locale" content="ja_JP" />
+	<link rel="shortcut icon" href="http://ninikokoji.com/diving-lily/wp-content/uploads/2024/11/iriomote512.png">
 
 	<?php if (is_404()) : ?>
 	<meta http-equiv="refresh" content=" 3; url=<?php echo esc_url(home_url('/')); ?>">
