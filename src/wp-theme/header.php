@@ -19,7 +19,7 @@
 	<meta property="og:site_name" content="CodeUps Diving Site" />
 	<meta property="og:description" content="CodeUpsのWordPress化課題サイトで、ダイビングの魅力を学び、挑戦しませんか？" />
 	<meta property="og:locale" content="ja_JP" />
-	<link rel="shortcut icon" href="http://ninikokoji.com/diving-lily/wp-content/uploads/2024/11/iriomote512.png">
+	<link rel="icon" href="http://ninikokoji.com/diving-lily/wp-content/uploads/2024/11/iriomote512.png">
 
 	<?php if (is_404()) : ?>
 	<meta http-equiv="refresh" content=" 3; url=<?php echo esc_url(home_url('/')); ?>">

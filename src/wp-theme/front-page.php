@@ -264,56 +264,72 @@
 			<h2 class="section-heading__subtitle">お客様の声</h2>
 		</div>
 		<ul class="top-voice__cards voice-cards">
+			<?php
+            // サブループ: voiceカスタム投稿タイプを取得
+            $voice_query = new WP_Query(array(
+                'post_type' => 'voice', // カスタム投稿タイプ
+                'posts_per_page' => 2, // 表示件数
+            ));
+						 if ($voice_query->have_posts()) :
+                while ($voice_query->have_posts()) : $voice_query->the_post(); ?>
 			<li class="voice-cards__item voice-card">
-				<a href="#" class="voice-card__link">
+				<a href="<?php the_permalink(); ?>" class="voice-card__link">
 					<div class="voice-card__body">
 						<div class="voice-card__top">
 							<div class="voice-card__meta">
-								<div class="voice-card__tag">20代(女性)</div>
+								<div class="voice-card__tag">
+									<?php
+                            $voice_tags = get_the_terms( get_the_ID(), 'voice_tag' );
+                            if ( ! empty( $voice_tags ) && ! is_wp_error( $voice_tags ) ) {
+                                foreach( $voice_tags as $tag ) {
+                                    echo '<span>' . esc_html( $tag->name ) . '</span> ';
+                                }
+                            } else {
+                                echo '<span>タグなし</span>';
+                            }
+                            ?>
+								</div>
 								<div class="voice-card__category">
-									<span>ライセンス講習</span>
+									<?php
+                                $terms = get_the_terms( get_the_ID(), 'voice_category' );
+                                if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+                                    foreach( $terms as $term ) {
+                                        echo '<span>' . esc_html( $term->name ) . '</span> ';
+                                    }
+                                } else {
+                                    echo '<span>カテゴリなし</span>';
+                                }
+                                ?>
 								</div>
 							</div>
 							<div class="voice-card__title">
-								ここにタイトルが入ります。ここにタイトル
+								<?php the_title(); ?>
 							</div>
 						</div>
 						<figure class="voice-card__img colorbox">
-							<img src="<?php echo get_theme_file_uri(); ?>/assets/images/voice01.jpg" alt="女性の写真" />
+							<?php
+                    // アイキャッチ画像を取得して変数に格納
+                    $thumbnail = get_the_post_thumbnail(get_the_ID(), 'full', array('alt' => get_the_title()));
+										// アイキャッチ画像がある場合は表示し、ない場合はデフォルト画像を表示
+								if ( $thumbnail ) {
+                        echo $thumbnail;
+                    } else {
+                        // デフォルトの画像のalt属性を投稿タイトルに変更
+                        echo '<img src="' . esc_url( get_theme_file_uri() . '/assets/images/voice01.jpg' ) . '" alt="' . esc_attr( get_the_title() ) . 'の画像" />';
+                    }
+                    ?>
 						</figure>
 					</div>
 					<div class="voice-card__text">
-						ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。<br />
-						ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。<br />
-						ここにテキストが入ります。ここにテキストが入ります。
+						<?php the_excerpt(); ?>
 					</div>
 				</a>
 			</li>
-			<li class="voice-cards__item voice-card">
-				<a href="#" class="voice-card__link">
-					<div class="voice-card__body">
-						<div class="voice-card__top">
-							<div class="voice-card__meta">
-								<div class="voice-card__tag">20代(男性)</div>
-								<div class="voice-card__category">
-									<span>ファンダイビング</span>
-								</div>
-							</div>
-							<div class="voice-card__title">
-								ここにタイトルが入ります。ここにタイトル
-							</div>
-						</div>
-						<figure class="voice-card__img colorbox">
-							<img src="<?php echo get_theme_file_uri(); ?>/assets/images/voice02.jpg" alt="男性の写真" />
-						</figure>
-					</div>
-					<div class="voice-card__text">
-						ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。<br />
-						ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。<br />
-						ここにテキストが入ります。ここにテキストが入ります。
-					</div>
-				</a>
-			</li>
+			<?php endwhile;
+                wp_reset_postdata();
+            else : ?>
+			<p>お客様の声は現在ありません。</p>
+			<?php endif; ?>
 		</ul>
 		<div class="top-voice__button">
 			<a href="<?php echo esc_url(home_url('/voice')); ?>" class="button"> View more</a>
