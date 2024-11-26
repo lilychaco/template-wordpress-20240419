@@ -356,82 +356,98 @@
 					</picture>
 				</figure>
 				<div class="top-price__lists price-lists">
+					<?php
+							// 固定ページIDを指定（ここでは29）
+							$page_id = 29;
+
+							// Smart Custom Fieldsのデータを取得
+							$license_pricelist = SCF::get('license_pricelist', $page_id);
+							if (!empty($license_pricelist)) : ?>
 					<div class="price-lists__item price-lists__item--first price-list">
 						<div class="price-list__title">ライセンス講習</div>
 						<ul class="price-list__items">
+							<?php foreach ($license_pricelist as $license) : ?>
+
 							<li class="price-list__item">
-								<p class="price-list__name">
-									オープンウォーターダイバーコース
-								</p>
-								<p class="price-list__number">¥50,000</p>
+								<p class="price-list__name"><?php echo esc_html($license['license_kinds']); ?></p>
+								<p class="price-list__number"><?php echo esc_html($license['license_price']); ?></p>
 							</li>
-							<li class="price-list__item">
-								<p class="price-list__name">
-									アドバンスドオープンウォーターコース
-								</p>
-								<p class="price-list__number">¥60,000</p>
-							</li>
-							<li class="price-list__item">
-								<p class="price-list__name">レスキュー＋EFRコース</p>
-								<p class="price-list__number">¥70,000</p>
-							</li>
+							<?php endforeach; ?>
 						</ul>
 					</div>
+					<?php else : ?>
+					<p>価格リストは現在準備中です。</p>
+					<?php endif; ?>
+
+
+					<?php
+							// 固定ページIDを指定（ここでは29）
+							$page_id = 29;
+
+							// Smart Custom Fieldsのデータを取得
+							$experience_pricelist = SCF::get('experience_pricelist', $page_id);
+							if (!empty($experience_pricelist)) : ?>
 					<div class="price-lists__item price-list">
 						<div class="price-list__title">体験ダイビング</div>
 						<ul class="price-list__items">
+							<?php foreach ($experience_pricelist as $experience) : ?>
 							<li class="price-list__item">
-								<p class="price-list__name">ビーチ体験ダイビング(半日)</p>
-								<p class="price-list__number">¥7,000</p>
+								<!-- 体験種類を表示 -->
+								<p class="price-list__name"><?php echo esc_html($experience['experience_name']); ?></p>
+								<!-- 体験料金を表示 -->
+								<p class="price-list__number"><?php echo esc_html($experience['experience_price']); ?></p>
 							</li>
-							<li class="price-list__item">
-								<p class="price-list__name">ビーチ体験ダイビング(1日)</p>
-								<p class="price-list__number">¥14,000</p>
-							</li>
-							<li class="price-list__item">
-								<p class="price-list__name">ボート体験ダイビング(半日)</p>
-								<p class="price-list__number">¥10,000</p>
-							</li>
-							<li class="price-list__item">
-								<p class="price-list__name">ボート体験ダイビング(1日)</p>
-								<p class="price-list__number">¥18,000</p>
-							</li>
+							<?php endforeach; ?>
 						</ul>
 					</div>
+					<?php else : ?>
+					<p>価格リストは現在準備中です。</p>
+					<?php endif; ?>
+
+					<?php
+							// 固定ページIDを指定（ここでは29）
+							$page_id = 29;
+
+							// Smart Custom Fieldsのデータを取得
+							$fundiving_pricelist = SCF::get('fundiving_pricelist', $page_id);
+							if (!empty($fundiving_pricelist)) : ?>
 					<div class="price-lists__item price-list">
 						<div class="price-list__title">ファンダイビング</div>
+
 						<ul class="price-list__items">
+							<?php foreach ($fundiving_pricelist as $fundiving) : ?>
 							<li class="price-list__item">
-								<p class="price-list__name">ビーチダイビング(2ダイブ)</p>
-								<p class="price-list__number">¥14,000</p>
+								<p class="price-list__name"><?php echo esc_html($fundiving['fundiving_name']); ?></p>
+								<p class="price-list__number"><?php echo esc_html($fundiving['fundiving_price']); ?></p>
 							</li>
-							<li class="price-list__item">
-								<p class="price-list__name">ボートダイビング(2ダイブ)</p>
-								<p class="price-list__number">¥18,000</p>
-							</li>
-							<li class="price-list__item">
-								<p class="price-list__name">スペシャルダイビング(2ダイブ)</p>
-								<p class="price-list__number">¥24,000</p>
-							</li>
-							<li class="price-list__item">
-								<p class="price-list__name">ナイトダイビング(1ダイブ)</p>
-								<p class="price-list__number">¥10,000</p>
-							</li>
+							<?php endforeach; ?>
 						</ul>
 					</div>
+					<?php else : ?>
+					<p>価格リストは現在準備中です。</p>
+					<?php endif; ?>
+					<?php
+							// 固定ページIDを指定（ここでは29）
+							$page_id = 29;
+
+							// Smart Custom Fieldsのデータを取得
+							$specialdiving_pricelist = SCF::get('specialdiving_pricelist', $page_id);
+							if (!empty($specialdiving_pricelist)) : ?>
+
 					<div class="price-lists__item price-list">
 						<div class="price-list__title">スペシャルダイビング</div>
 						<ul class="price-list__items">
+							<?php foreach ($specialdiving_pricelist as $special) : ?>
 							<li class="price-list__item">
-								<p class="price-list__name">貸切ダイビング(2ダイブ)</p>
-								<p class="price-list__number">¥24,000</p>
+								<p class="price-list__name"><?php echo esc_html($special['specialdiving_name']); ?></p>
+								<p class="price-list__number"><?php echo esc_html($special['specialdiving_price']); ?></p>
 							</li>
-							<li class="price-list__item">
-								<p class="price-list__name">1日ダイビング(3ダイブ)</p>
-								<p class="price-list__number">¥32,000</p>
-							</li>
+							<?php endforeach; ?>
 						</ul>
 					</div>
+					<?php else : ?>
+					<p>価格リストは現在準備中です。</p>
+					<?php endif; ?>
 				</div>
 			</div>
 			<div class="top-price__button">
