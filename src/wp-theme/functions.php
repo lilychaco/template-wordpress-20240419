@@ -315,26 +315,34 @@ ContactForm7で自動挿入されるPタグ、brタグを削除
 // CF7送信後にリダイレクト
 add_action('wp_footer', 'redirect_cf7');
 function redirect_cf7() {
+    // サイトのアドレスを動的に取得
+    $thanks_page = home_url('/diving-lily/contact/thanks/');
     ?>
 <script type="text/javascript">
 document.addEventListener('wpcf7mailsent', function(event) {
-	window.location.href = 'https://ninikokoji.com/diving-lily/contact/thanks/'; // サンクスページのURLにリダイレクト
+	// PHPで生成したURLを使ってリダイレクト
+	window.location.href = '<?php echo esc_url($thanks_page); ?>';
 }, false);
 </script>
 <?php
 }
 
+
 // CF7送信エラー時にエラーページにリダイレクト
 add_action('wp_footer', 'redirect_cf7_error');
 function redirect_cf7_error() {
+    // サイトのベースURLからエラーページのURLを動的に生成
+    $error_page = home_url('/diving-lily/contact/error/');
     ?>
 <script type="text/javascript">
 document.addEventListener('wpcf7invalid', function(event) {
-	window.location.href = 'https://ninikokoji.com/diving-lily/contact/error/'; // エラーページのURL
+	// PHPで生成したURLをJavaScriptで利用
+	window.location.href = '<?php echo esc_url($error_page); ?>';
 }, false);
 </script>
 <?php
 }
+
 
 
 
