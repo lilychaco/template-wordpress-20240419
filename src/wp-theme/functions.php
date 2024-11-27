@@ -169,15 +169,41 @@ add_filter('wp_pagenavi', 'custom_pagenavi_html');
 
 
 
-
-
-
 //カスタム投稿のタグをチェックボックスで入力できるようにする
 // デフォルトで表示されているメタボックスを消去するー消去できていない
 function my_tag_meta_box_remove() {
     remove_meta_box('tagsdiv-voice_tag', 'voice', 'side');
 }
 add_action('admin_init', 'my_tag_meta_box_remove');
+
+
+
+/*-----------------------------------
+// メインループで campaign を取得するためのフィルター追加
+-----------------------------------*/
+function include_campaign_in_main_query($query) {
+    // 管理画面ではなく、メインクエリかつ特定のアーカイブページでのみ処理
+    if (!is_admin() && $query->is_main_query() && is_post_type_archive('campaign')) {
+        $query->set('post_type', 'campaign'); // カスタム投稿タイプを指定
+        $query->set('posts_per_page', 4);    // 1ページあたりの投稿数
+    }
+}
+add_action('pre_get_posts', 'include_campaign_in_main_query');
+
+
+/*-----------------------------------
+// メインループで voice を取得するためのフィルター追加
+-----------------------------------*/
+function include_voice_in_main_query($query) {
+    // 管理画面ではなく、メインクエリかつ特定のアーカイブページでのみ処理
+    if (!is_admin() && $query->is_main_query() && is_post_type_archive('voice')) {
+        $query->set('post_type', 'voice'); // カスタム投稿タイプを指定
+        $query->set('posts_per_page', 6);    // 1ページあたりの投稿数
+    }
+}
+add_action('pre_get_posts', 'include_voice_in_main_query');
+
+
 
 
 /*-----------------------------------
@@ -295,9 +321,6 @@ function track_post_views($post_id) {
 add_action('wp_head', 'track_post_views');
 
 
-/*-----------------------------------
-特定の固定ページにだけSmart Custom Fieldsの入力欄を表示させる
------------------------------------*/
 
 
 
