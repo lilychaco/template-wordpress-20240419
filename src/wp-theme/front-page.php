@@ -84,7 +84,15 @@
 					<div class="campaign-card__body">
 						<div class="campaign-card__top">
 							<div class="campaign-card__category">
-								<?php echo (get_field('category')) ? esc_html(get_field('category')) : 'カテゴリ未設定'; ?></div>
+								<?php
+                                $categories = get_the_terms(get_the_ID(), 'campaign-category');
+                                if ($categories && !is_wp_error($categories)) {
+                                    $category_names = wp_list_pluck($categories, 'name');
+                                    echo esc_html(implode(', ', $category_names));
+                                } else {
+                                    echo 'カテゴリ未設定';
+                                }
+                                ?></div>
 							<div class="campaign-card__title"><?php the_title(); ?></div>
 						</div>
 						<div class="campaign-card__text">
