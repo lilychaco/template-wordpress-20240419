@@ -17,18 +17,10 @@
 			<div class="blog__main">
 				<ul class="blog__items blog-cards blog-cards--2col">
 					<?php
-						// サブループ用のクエリ設定
-						$args = [
-								'post_type'      => 'post', // 投稿タイプ（通常は'post'）
-								'posts_per_page' => 10,     // 1ページに表示する投稿数
-								'paged'          => get_query_var('paged', 1), // 現在のページ番号
-						];
-						$blog_query = new WP_Query($args); // カスタムクエリを作成
+					// メインループの開始
+					if (have_posts()) :
+						while (have_posts()) : the_post(); ?>
 
-						// 投稿が存在するか確認
-						if ($blog_query->have_posts()) :
-            // ループ開始
-            while ($blog_query->have_posts()) : $blog_query->the_post(); ?>
 					<!-- 投稿のループ開始 -->
 					<li class="blog-card">
 						<a href="<?php the_permalink(); ?>" class="blog-card__link">
@@ -72,19 +64,9 @@
 				<!-- ページネーションの表示 -->
 				<div class="blog__nav page-nav">
 					<div class="page-nav__pager">
-						<?php
-							// ページネーションを表示
-							if (function_exists('wp_pagenavi')) {
-								wp_pagenavi(['query' => $blog_query]);
-							} else {
-								the_posts_pagination([
-									'mid_size'  => 2,
-									'prev_text' => __('« Previous', 'text-domain'),
-									'next_text' => __('Next »', 'text-domain'),
-								]);
-							}
-						?>
-						<?php wp_reset_postdata(); // pagenavi後にリセット ?>
+						<?php if ($wp_query->max_num_pages > 1) : // メインクエリでのページ数を確認 ?>
+						<?php wp_pagenavi(); ?>
+						<?php endif; ?>
 					</div>
 				</div>
 			</div>

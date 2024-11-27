@@ -16,26 +16,26 @@
 	<div class="archive-campaign__inner inner">
 		<!-- カテゴリリスト部分 -->
 		<ul class="archive-campaign__category-list category-list fish">
+			<!-- ALL のリンク -->
 			<li class="category-list__item">
-				<!-- ALLカテゴリへのリンク（archive-campaign.phpに戻る） -->
 				<a href="<?php echo esc_url(get_post_type_archive_link('campaign')); ?>"
-					class="category-list__link <?php echo (!isset($_GET['term']) || $_GET['term'] == 'all') ? 'is-current' : ''; ?>">
+					class="category-list__link <?php echo (is_post_type_archive('campaign') || is_tax('campaign-category')) ? '' : 'is-current'; ?>">
 					ALL
 				</a>
 			</li>
 			<?php
-					// 'campaign-category'タクソノミーの用語を取得
-					$terms = get_terms(array(
-							'taxonomy' => 'campaign-category',
-							'hide_empty' => false,
-					));
-					?>
-			<?php if (!empty($terms)) : ?>
-			<?php foreach ($terms as $term) : ?>
+    // 'campaign-category'タクソノミーの用語を取得
+    $terms = get_terms(array(
+        'taxonomy' => 'campaign-category',
+        'hide_empty' => false,
+    ));
+
+    if (!empty($terms)) :
+        foreach ($terms as $term) :
+    ?>
 			<li class="category-list__item">
-				<!-- タクソノミーのリンクを作成 -->
 				<a href="<?php echo esc_url(get_term_link($term)); ?>"
-					class="category-list__link <?php echo (isset($_GET['term']) && $_GET['term'] == $term->slug) ? 'is-current' : ''; ?>">
+					class="category-list__link <?php echo (is_tax('campaign-category', $term->slug)) ? 'is-current' : ''; ?>">
 					<?php echo esc_html($term->name); ?>
 				</a>
 			</li>
@@ -46,31 +46,35 @@
 		<!-- 投稿リスト部分 -->
 		<ul class="archive-campaign__content archive-campaign-cards">
 			<?php
-				// クエリパラメータからタームを取得
-				$term = isset($_GET['term']) ? sanitize_text_field($_GET['term']) : 'all';
+			// 現在のターム情報を取得
+			$current_term = get_queried_object();
 
-				// ページ番号を取得
-				$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+			// クエリの設定
+			$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 
-			// カスタムクエリを設定
-
-			if ($term !== 'all') {
-			$args['tax_query'] = array(
-			array(
-			'taxonomy' => 'campaign-category',
-			'field' => 'slug',
-			'terms' => $term,
-			),
+			$args = array(
+				'post_type' => 'campaign', // カスタム投稿タイプ
+				'tax_query' => array(
+					array(
+						'taxonomy' => 'campaign-category', // タクソノミー名
+						'field' => 'slug', // タームのフィールド（スラッグを使用）
+						'terms' => $current_term->slug, // 現在のタームのスラッグ
+					),
+				),
+				'posts_per_page' => 4, // 1ページあたりの投稿数
+				'paged' => $paged, // ページ番号
 			);
-			}
 
-		// ループはそのまま利用可能
-		if (have_posts()) : while (have_posts()) : the_post();
-        // カスタムフィールドの値を取得
-        $price_old = get_field('campaign-price_old');
-        $price_new = get_field('campaign-price_new');
-        $period = get_field('campaign-period');
-   			 ?>
+			$query = new WP_Query($args);
+
+		/// ループ
+			if ($query->have_posts()) :
+				while ($query->have_posts()) : $query->the_post();
+					// カスタムフィールドの値を取得
+					$price_old = get_field('campaign-price_old');
+					$price_new = get_field('campaign-price_new');
+					$period = get_field('campaign-period');
+			?>
 
 			<li class="archive-campaign-cards__item archive-campaign-card">
 				<figure class="archive-campaign-card__img">
@@ -129,13 +133,18 @@
 		</ul>
 
 
+		<!-- ページネーション -->
 		<div class="archive-campaign__nav page-nav">
 			<ul class="page-nav__pager">
-				<?php if ($wp_query->max_num_pages > 1) : // メインクエリでのページ数を確認 ?>
-				<?php wp_pagenavi(); ?>
-				<?php endif; ?>
+				<?php
+				// ページナビの表示
+				if (function_exists('wp_pagenavi')) {
+					wp_pagenavi(array('query' => $query));
+				}
+				?>
 			</ul>
 		</div>
+		<?php wp_reset_postdata(); // クエリのリセット ?>
 
 	</div>
 </div>
