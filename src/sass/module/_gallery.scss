@@ -82,3 +82,9 @@ gap:rem(8);
   object-fit: contain;
 	z-index: 1001; /* モーダルコンテンツのz-indexを設定 */
 }
+
+/* 背景スクロールを無効化するためのクラス */
+.no-scroll {
+    overflow: hidden;
+    height: 100vh; /* 背景が縦にスクロールしないようにする */
+}
