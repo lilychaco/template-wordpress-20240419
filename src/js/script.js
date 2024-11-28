@@ -33,39 +33,24 @@ jQuery(function ($) {
 		// ==================================
 		// インフォメーションページのタブの動きを制御
 		// ==================================
-		$(document).ready(function () {
-			// 初期設定として一番目のタブを表示
-			$(".js-content").hide().first().show();
-			$(".js-tab").first().addClass("current");
+$(document).ready(function () {
+  // 初期設定として一番目のタブを表示
+  $(".js-content").hide().first().show(); // すべて非表示にして最初だけ表示
+  $(".js-tab").first().addClass("current"); // 最初のタブに選択状態を付与
 
-			const hash = window.location.hash;
-			if (hash) {
-				$(".js-tab").removeClass("current");
-				$(".js-content").hide();
+  // タブクリック時のイベント
+  $(".js-tab").on("click", function () {
+    const $clickedTab = $(this); // クリックされたタブを取得
+    const index = $clickedTab.index(); // タブのインデックス番号を取得
 
-				const targetTab = $(`p[id="${hash.substring(1)}"]`).closest(".js-tab"); // ハッシュから対象のタブを取得
-				if (targetTab.length) {
-					const tabIndex = targetTab.index(); // タブのインデックスを取得
-					$(".js-tab").eq(tabIndex).addClass("current"); // 対象タブを選択状態に
-					$(".js-content").eq(tabIndex).fadeIn(300); // 対応するコンテンツを表示
-				}
-			}
+    $(".js-tab").removeClass("current"); // 全てのタブの選択状態を解除
+    $clickedTab.addClass("current"); // クリックされたタブを選択状態に
 
-			$(".js-tab").on("click", function (event) {
-				const $clickedTab = $(this); // クリックされたタブそのものを取得
-				const index = $clickedTab.index();
+    $(".js-content").hide().eq(index).fadeIn(300); // 対応するコンテンツを表示
+  });
+});
 
-				$(".js-tab").removeClass("current"); // 現在選択されているタブの選択状態を解除
-				$clickedTab.addClass("current"); // クリックされたタブを選択状態に
 
-				$(".js-content").hide().eq(index).fadeIn(300);
-
-				const tabId = $clickedTab.find("p").attr("id");
-				if (tabId) {
-					window.location.hash = tabId;
-				}
-			});
-		});
 
 		//================================
 		//  サイドのアーカイブメニューの動作
